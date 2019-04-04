@@ -60,6 +60,23 @@ jobs:
           command: |
             echo "Uploading release:${CIRCLE_TAG}"
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${CIRCLE_TAG} workspace/release/
+  publish-github-ci-pre-release:
+    docker:
+      - image: cibuilds/github:latest
+    steps:
+      - attach_workspace:
+          at: workspace
+      - run: ls workspace/release
+      - run:
+          name: "Publish CI pre-release on Github"
+          command: |
+            echo "Uploading CI pre-release..."
+            LAST_GNUTON_TAG=$(git describe --match "*gnuton*" --tags  --abbrev=0 HEAD)
+            CHANGELOG=$(git log ${LAST_GNUTON_TAG}...HEAD --pretty=format:'* %s' --reverse | grep -v 'Merge branch')
+            RELEASE_TITLE="CI pre-release for branch ${CIRCLE_BRANCH}"
+            RELEASE_BODY="This firmware has been built from ${CIRCLE_BRANCH} commit ${CIRCLE_SHA1}i\n${CHANGELOG}"
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -n ${RELEASE_TITLE} -b ${RELEASE_BODY} -delete ${CIRCLE_TAG} workspace/release/ -prerelease
+ 
 workflows:
   version: 2
   build_and_release:
@@ -75,6 +92,15 @@ workflows:
             tags:
               only: /.*/
             branches:
-              ignore: /master/
+              ignore: /.*/
+          requires:
+            - build
+     - publish-github-ci-pre-release:
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only:
+               - dsl-unstable
           requires:
             - build
