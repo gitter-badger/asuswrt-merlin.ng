@@ -102,10 +102,8 @@ workflows:
       - publish-github-ci-pre-release:
           filters:
             tags:
-              only:
-               - snapshot 
+              only: /snapshot/ 
             branches:
-              only:
-               - dsl-unstable
+              only: /dsl-unstable/
           requires:
             - build
