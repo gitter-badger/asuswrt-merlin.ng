@@ -75,7 +75,8 @@ jobs:
             CHANGELOG=$(git log ${LAST_GNUTON_TAG}...HEAD --pretty=format:'* %s' --reverse | grep -v 'Merge branch')
             RELEASE_TITLE="CI pre-release for branch ${CIRCLE_BRANCH}"
             RELEASE_BODY="This firmware has been built from ${CIRCLE_BRANCH} commit ${CIRCLE_SHA1}i\n${CHANGELOG}"
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -n ${RELEASE_TITLE} -b ${RELEASE_BODY} -delete ${CIRCLE_TAG} workspace/release/ -prerelease
+            TAG='SNAPSHOT'
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -n ${RELEASE_TITLE} -b ${RELEASE_BODY} -delete ${TAG}  workspace/release/ -prerelease
  
 workflows:
   version: 2
