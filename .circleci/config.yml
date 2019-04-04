@@ -55,7 +55,7 @@ jobs:
             #X cp ${PROJECT_DIR}/release/src-rt-6.x.4708/image/*.trx workspace/release
             #X cp ${PROJECT_DIR}/release/src-rt-6.x.4708/image/*.md5 workspace/release
             #X cp /tmp/build.log workspace/release
-            cp -f /tmp/CHANGELOG workspace/release
+            cp -f /tmp/CHANGELOG workspace/release | true
       - persist_to_workspace:
           root: workspace
           paths:
