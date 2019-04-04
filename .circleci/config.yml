@@ -102,7 +102,7 @@ workflows:
       - publish-github-release:
           filters:
             tags:
-              only: /.*gnuton.*/
+              only: /[0-9]+.*gnuton.*/
             branches:
               ignore: /.*/
           requires:
