@@ -78,8 +78,8 @@ jobs:
           name: "Publish CI pre-release on Github"
           command: |
             echo "Uploading CI pre-release..."
-            RELEASE_TITLE="CI pre-release for branch ${CIRCLE_BRANCH}"
-            RELEASE_BODY="This firmware has been built from ${CIRCLE_BRANCH} commit ${CIRCLE_SHA1}i\n${cat workspace/release/CHANGELOG}"
+            RELEASE_TITLE="CI SNAPSHOT"
+            RELEASE_BODY="Please check the CHANGELOG file for the changes of this pre-release."
             TAG='SNAPSHOT'
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -n ${RELEASE_TITLE} -b ${RELEASE_BODY} -delete ${TAG}  workspace/release/ -prerelease
  
