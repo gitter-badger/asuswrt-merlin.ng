@@ -25,8 +25,7 @@ jobs:
             if [[ ${CIRCLE_TAG} =~ ${REGXP_TO_MATCH} ]]; then 
               CURRENT_TAG=$(git tag --sort=-version:refname | grep ${REGXP_TO_MATCH} | head -n 1)
               PREVIOUS_TAG=$(git tag --sort=-version:refname | grep -v snapshot | grep ${REGXP_TO_MATCH} | head -n 2 | sed -n 2p)
-              CHANGELOG=$(git log ${PREVIOUS_TAG}...${CURRENT_TAG} --pretty=format:'* %s' --reverse | grep -v 'Merge branch')
-              echo $CHANGELOG > /tmp/CHANGELOG
+              git log ${PREVIOUS_TAG}...${CURRENT_TAG} --pretty=format:'* %s' --reverse | grep -v 'Merge branch' > /tmp/CHANGELOG
               echo $CHANGELOG
             else 
               echo "No changelog to generate. Changelog is generated only for tags matching ${REGXP_TO_MATCH}";
@@ -55,7 +54,11 @@ jobs:
             #X cp ${PROJECT_DIR}/release/src-rt-6.x.4708/image/*.trx workspace/release
             #X cp ${PROJECT_DIR}/release/src-rt-6.x.4708/image/*.md5 workspace/release
             #X cp /tmp/build.log workspace/release
-            cp -f /tmp/CHANGELOG workspace/release | true
+             if [ -z "${CIRCLE_TAG}" ]; then
+              echo "No CHANGELOG to copy. Not a release build."
+            else
+              cp -f /tmp/CHANGELOG workspace/release
+            fi
       - persist_to_workspace:
           root: workspace
           paths:
@@ -83,8 +86,8 @@ jobs:
           name: "Publish CI pre-release on Github"
           command: |
             echo "Uploading CI pre-release..."
-            RELEASE_TITLE="Experimental Snapshot ${CIRCLE_TAG}"
-            RELEASE_BODY="Please check the CHANGELOG file for the changes of this pre-release."
+            RELEASE_TITLE="Snapshot: ${CIRCLE_TAG}"
+            RELEASE_BODY="This is an experimental build. Please check the CHANGELOG for more info."
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -n "${RELEASE_TITLE}" -b "${RELEASE_BODY}" -delete -prerelease ${CIRCLE_TAG} workspace/release/
  
 workflows:
