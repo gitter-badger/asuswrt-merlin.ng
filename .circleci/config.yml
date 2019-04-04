@@ -85,7 +85,7 @@ jobs:
             echo "Uploading CI pre-release..."
             RELEASE_TITLE="Experimental Snapshot ${CIRCLE_TAG}"
             RELEASE_BODY="Please check the CHANGELOG file for the changes of this pre-release."
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -n ${RELEASE_TITLE} -b ${RELEASE_BODY} -delete -prerelease ${CIRCLE_TAG} workspace/release/
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -n "${RELEASE_TITLE}" -b "${RELEASE_BODY}" -delete -prerelease ${CIRCLE_TAG} workspace/release/
  
 workflows:
   version: 2
