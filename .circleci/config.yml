@@ -87,7 +87,7 @@ jobs:
           command: |
             echo "Uploading CI pre-release..."
             RELEASE_TITLE="Snapshot: ${CIRCLE_TAG}"
-            RELEASE_BODY="This is an experimental build. Please check the CHANGELOG for more info.\nChangelog:\n"
+            RELEASE_BODY="This is an experimental build. Here below you can find the changes from the latest stable gnuton build.\n Changelog:\n "
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -n "${RELEASE_TITLE}" -b "${RELEASE_BODY}$(cat workspace/release/CHANGELOG)" -delete -prerelease ${CIRCLE_TAG} workspace/release/
  
 workflows:
