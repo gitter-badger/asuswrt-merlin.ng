@@ -86,7 +86,9 @@ workflows:
             tags:
               only: /.*/
             branches:
-              ignore: master
+              ignore:
+               - master
+               - mainline
       - publish-github-release:
           filters:
             tags:
@@ -95,7 +97,7 @@ workflows:
               ignore: /.*/
           requires:
             - build
-     - publish-github-ci-pre-release:
+      - publish-github-ci-pre-release:
           filters:
             tags:
               only: /.*/
