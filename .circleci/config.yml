@@ -25,7 +25,8 @@ jobs:
             if [[ ${CIRCLE_TAG} =~ ${REGXP_TO_MATCH} ]]; then 
               CURRENT_TAG=$(git tag --sort=-version:refname | grep ${REGXP_TO_MATCH} | head -n 1)
               PREVIOUS_TAG=$(git tag --sort=-version:refname | grep -v snapshot | grep ${REGXP_TO_MATCH} | head -n 2 | sed -n 2p)
-              git log ${PREVIOUS_TAG}...${CURRENT_TAG} --pretty=format:'* %s' --reverse | grep -v 'Merge branch' > /tmp/CHANGELOG
+              echo "Changes from the latest stable gnuton build:" > /tmp/CHANGELOG
+              git log ${PREVIOUS_TAG}...${CURRENT_TAG} --pretty=format:'* %s' --reverse | grep -v 'Merge branch' >> /tmp/CHANGELOG
               echo $CHANGELOG
             else 
               echo "No changelog to generate. Changelog is generated only for tags matching ${REGXP_TO_MATCH}";
@@ -73,8 +74,9 @@ jobs:
       - run:
           name: "Publish Release on Github"
           command: |
-            echo "Uploading release:${CIRCLE_TAG}"
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${CIRCLE_TAG} workspace/release/
+            echo "Uploading release..."
+            RELEASE_TITLE="Release: ${CIRCLE_TAG}"
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete -n "${RELEASE_TITLE}" -b "$(cat workspace/release/CHANGELOG)" ${CIRCLE_TAG} workspace/release/
   publish-github-ci-pre-release:
     docker:
       - image: cibuilds/github:latest
@@ -87,8 +89,7 @@ jobs:
           command: |
             echo "Uploading CI pre-release..."
             RELEASE_TITLE="Snapshot: ${CIRCLE_TAG}"
-            RELEASE_BODY="This is an experimental build. Here below you can find the changes from the latest stable gnuton build.\n Changelog:\n "
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -n "${RELEASE_TITLE}" -b "${RELEASE_BODY}$(cat workspace/release/CHANGELOG)" -delete -prerelease ${CIRCLE_TAG} workspace/release/
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -n "${RELEASE_TITLE}" -b "$(cat workspace/release/CHANGELOG)" -delete -prerelease ${CIRCLE_TAG} workspace/release/
  
 workflows:
   version: 2
